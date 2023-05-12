@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>685</width>
+    <height>482</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="cpuTempGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>120</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>CPU temp [°C]</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="cpuUseGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>20</y>
+      <width>120</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>CPU usage [%]</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="fanGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>20</y>
+      <width>120</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Fan speed [RPM]</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="ramGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>20</y>
+      <width>120</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>RAM usage [%]</string>
+    </property>
+   </widget>
+   <widget class="QScrollBar" name="cpuTempVerticalScrollBar">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>20</y>
+      <width>16</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QScrollBar" name="cpuUseVerticalScrollBar">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>20</y>
+      <width>16</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QScrollBar" name="fanVerticalScrollBar">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>20</y>
+      <width>16</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QScrollBar" name="ramVerticalScrollBar">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>20</y>
+      <width>16</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="tempButton">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>240</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Threshold: 100%</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="useButton">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>240</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Threshold: 100%</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="fanButton">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>240</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Threshold: 100%</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ramButton">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>240</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Threshold: 100%</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>685</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <action name="actionSearch_path">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Search path</string>
+   </property>
+  </action>
+  <action name="actionLoad_last_path">
+   <property name="text">
+    <string>Load last path</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
