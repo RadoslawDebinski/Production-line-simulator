@@ -1,15 +1,30 @@
 import sys
-import psutil
-from PySide2.QtCore import Qt, QFile, QTimer
+import time
+from PySide2.QtCore import Qt, QFile, QTimer, QObject, QThread, Signal, Slot, QCoreApplication
+from PySide2.QtGui import QColor
 from PySide2.QtWidgets import QApplication, QMainWindow, \
     QPushButton, QLabel, QGroupBox, QScrollBar, QFrame, QVBoxLayout
 from PySide2.QtCharts import QtCharts
 from PySide2.QtUiTools import QUiLoader
+import psutil
 import wmi
 
 
-class InputUI(QMainWindow):
+class Worker(QObject):
+    update_signal = Signal(int)
+
     def __init__(self):
+        super().__init__()
+
+    def update(self):
+        while True:
+            # Emit the signal with the updated value
+            self.update_signal.emit(0)
+            QCoreApplication.processEvents()
+            time.sleep(0.25)
+
+class InputUI(QMainWindow):
+    def __init__(self, chart_view=None):
         super(InputUI, self).__init__()
 
         # Load the ui file
@@ -19,9 +34,48 @@ class InputUI(QMainWindow):
 
         # Find the QGroupBoxes and add charts to them
         cpu_temp_group_box = self.ui.findChild(QGroupBox, "cpuTempGroupBox")
+        self.chart1View = QtCharts.QChartView()
+        self.chart1View.setMinimumHeight(190)
+        self.chart1Layout = QVBoxLayout()
+        self.chart1Layout.addWidget(self.chart1View)
+        cpu_temp_group_box.setLayout(self.chart1Layout)
+
+        # Create a QChart instance
+        chart1 = QtCharts.QChart()
+        chart1.setTitle("My Bar Chart")
+
+        # Create a QBarSeries instance and add it to the chart
+        self.series1 = QtCharts.QBarSeries()
+        chart1.addSeries(self.series1)
+
+        # Customize the chart
+        chart1.setAnimationOptions(QtCharts.QChart.SeriesAnimations)
+        chart1.setTheme(QtCharts.QChart.ChartThemeBlueCerulean)
+        chart1.legend().hide()
+
+        # Set the chart to be displayed in the QChartView
+        self.chart1View.setChart(chart1)
+
         cpu_use_group_box = self.ui.findChild(QGroupBox, "cpuUseGroupBox")
+        self.chart2View = QtCharts.QChartView()
+        self.chart2View.setMinimumHeight(190)
+        self.chart2Layout = QVBoxLayout()
+        self.chart2Layout.addWidget(self.chart2View)
+        cpu_use_group_box.setLayout(self.chart2Layout)
+
         fan_group_box = self.ui.findChild(QGroupBox, "fanGroupBox")
+        self.chart3View = QtCharts.QChartView()
+        self.chart3View.setMinimumHeight(190)
+        self.chart3Layout = QVBoxLayout()
+        self.chart3Layout.addWidget(self.chart3View)
+        fan_group_box.setLayout(self.chart3Layout)
+
         ram_group_box = self.ui.findChild(QGroupBox, "ramGroupBox")
+        self.chart4View = QtCharts.QChartView()
+        self.chart4View.setMinimumHeight(190)
+        self.chart4Layout = QVBoxLayout()
+        self.chart4Layout.addWidget(self.chart4View)
+        ram_group_box.setLayout(self.chart4Layout)
 
         # Find the QScrollBars
         cpu_temp_scroll_bar = self.ui.findChild(QScrollBar, "cpuTempVerticalScrollBar")
@@ -42,33 +96,24 @@ class InputUI(QMainWindow):
         self.fan_indicator = QFrame(self.ui)
         self.ram_indicator = QFrame(self.ui)
 
-        # Values
-        self.cpu_temp_value = QFrame(self.ui)
-        self.cpu_temp_value_label = QLabel("#####")
-        self.cpu_temp_value_label.setParent(self.cpu_temp_value)
-
-        self.cpu_use_value = QFrame(self.ui)
-        self.cpu_use_value_label = QLabel("#####")
-        self.cpu_use_value_label.setParent(self.cpu_use_value)
-
-        self.fan_value = QFrame(self.ui)
-        self.fan_value_label = QLabel("#####")
-        self.fan_value_label.setParent(self.fan_value)
-
-        self.ram_value = QFrame(self.ui)
-        self.ram_value_label = QLabel("#####")
-        self.ram_value_label.setParent(self.ram_value)
-
-        # Set up the timer
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_values)
-        self.timer.start(250)  # Update every 0.25 seconds
-
         # Connect Our Widgets
         cpu_temp_scroll_bar.valueChanged.connect(self.handle_temp_scroll_bar_value_changed)
         cpu_use_scroll_bar.valueChanged.connect(self.handle_use_scroll_bar_value_changed)
         fan_scroll_bar.valueChanged.connect(self.handle_fan_scroll_bar_value_changed)
         ram_scroll_bar.valueChanged.connect(self.handle_ram_scroll_bar_value_changed)
+
+        # Create the worker and thread
+        self.worker = Worker()
+        self.worker_thread = QThread()
+        self.worker.moveToThread(self.worker_thread)
+
+        # Connect signals/slots
+        self.worker.update_signal.connect(self.update_values)
+        self.worker_thread.started.connect(self.worker.update)
+
+        # Start the thread
+        self.worker_thread.start()
+
         # Show the app
         self.ui.show()
 
@@ -112,14 +157,23 @@ class InputUI(QMainWindow):
         # Get PC parameters
         # cpu_temp = self.get_cpu_temp()
         cpu_usage = self.get_cpu_usage()
+        print(cpu_usage)
         # fan_speed = self.get_fan_speed()
         # ram_usage = self.get_ram_usage()
 
-        # Get CPU usage
-        self.cpu_use_value.setFixedSize(100, cpu_usage * self.indicators_scaler)
-        self.cpu_use_value.move(60, 230 - cpu_usage * self.indicators_scaler)
-        self.cpu_use_value.setStyleSheet("background-color: red;")
-        self.cpu_use_value_label.setText(f"{cpu_usage}")
+        # Create a QBarSet instance with the value you want to display and add it to the QBarSeries
+        # Clear the old data
+        self.series1.clear()
+
+        # Add the new data
+        set1 = QtCharts.QBarSet("Data")
+        set1.append(20)
+        self.series1.append(set1)
+
+        # Update the chart
+        self.chart1View.chart().update()
+
+
 
     def get_cpu_temp(self):
         w = wmi.WMI(namespace="root\\OpenHardwareMonitor", find_classes=True)
