@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/background/standard">
+        <file alias="line">production_line.jpg</file>
+    </qresource>
+
+    <qresource prefix="/robotics/parts">
+        <file alias="arm">arm.jpg</file>
+    </qresource>
+
+</RCC>

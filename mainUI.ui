@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>CPU temp [°C]</string>
+     <string>GPU temp [°C]</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="cpuUseGroupBox">
@@ -50,7 +50,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Fan speed [RPM]</string>
+     <string>GPU mem [10*GB]</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="ramGroupBox">
@@ -178,7 +178,7 @@
      <x>0</x>
      <y>0</y>
      <width>685</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
