@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
-    <height>482</height>
+    <width>799</width>
+    <height>590</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -170,6 +170,65 @@
      <string>Threshold: 100%</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="prodLineGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>299</y>
+      <width>581</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Production line</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>639</x>
+      <y>300</y>
+      <width>141</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Speed</string>
+    </property>
+    <widget class="QWidget" name="gridLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>235</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="radioButton_2">
+        <property name="text">
+         <string>Normal</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="radioButton">
+        <property name="text">
+         <string>Fast</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radioButton_3">
+        <property name="text">
+         <string>Slow</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
@@ -177,7 +236,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>685</width>
+     <width>799</width>
      <height>26</height>
     </rect>
    </property>
