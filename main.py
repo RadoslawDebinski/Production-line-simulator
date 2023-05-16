@@ -5,13 +5,14 @@ import numpy as np
 from PySide2.QtCore import QTimer
 from PySide2.QtGui import QPixmap, QBrush, QColor
 from PySide2.QtWidgets import QApplication, QMainWindow, \
-    QPushButton, QLabel, QGroupBox, QScrollBar, QFrame, QVBoxLayout, QRadioButton, QGraphicsScene, QGraphicsView, \
-    QGraphicsRectItem
+    QPushButton, QLabel, QGroupBox, QScrollBar, QFrame, QVBoxLayout, QRadioButton
 from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsRectItem
 from PySide2.QtUiTools import QUiLoader
 import threading
 import pythoncom
 from hardwareInfo import HardWare
+import scrollBars as sB
+import lineModes as lM
 from imageProcessing import ImageProcessing
 import images.images
 
@@ -129,40 +130,16 @@ class InputUI(QMainWindow):
         self.ui.show()
 
     def handle_temp_scroll_bar_value_changed(self, value):
-        self.gpu_temp_thresh = 100 - value
-        # Set visible value on button
-        self.gpu_temp_button.setText(f"Threshold: {100 - value}%")
-        # Set position, size and color for indicator
-        self.gpu_temp_indicator.setFixedSize(120, 2)
-        self.gpu_temp_indicator.move(50, 40 + value * self.indicators_scaler)
-        self.gpu_temp_indicator.setStyleSheet("background-color: red;")
+        sB.handle_temp_scroll_bar_value_changed(self, value)
 
     def handle_use_scroll_bar_value_changed(self, value):
-        self.cpu_usage_thresh = 100 - value
-        # Set visible value on button
-        self.cpu_use_button.setText(f"Threshold: {100 - value}%")
-        # Set position, size and color for indicator
-        self.cpu_use_indicator.setFixedSize(120, 2)
-        self.cpu_use_indicator.move(200, 40 + value * self.indicators_scaler)
-        self.cpu_use_indicator.setStyleSheet("background-color: green;")
+        sB.handle_use_scroll_bar_value_changed(self, value)
 
     def handle_gpu_mem_scroll_bar_value_changed(self, value):
-        self.gpu_usage_thresh = 100 - value
-        # Set visible value on button
-        self.gpu_mem_button.setText(f"Threshold: {100 - value}%")
-        # Set position, size and color for indicator
-        self.gpu_mem_indicator.setFixedSize(120, 2)
-        self.gpu_mem_indicator.move(350, 40 + value * self.indicators_scaler)
-        self.gpu_mem_indicator.setStyleSheet("background-color: blue;")
+        sB.handle_gpu_mem_scroll_bar_value_changed(self, value)
 
     def handle_ram_scroll_bar_value_changed(self, value):
-        self.ram_usage_thresh = 100 - value
-        # Set visible value on button
-        self.ram_button.setText(f"Threshold: {100 - value}%")
-        # Set position, size and color for indicator
-        self.ram_indicator.setFixedSize(120, 2)
-        self.ram_indicator.move(500, 40 + value * self.indicators_scaler)
-        self.ram_indicator.setStyleSheet("background-color: yellow;")
+        sB.handle_ram_scroll_bar_value_changed(self, value)
 
     def update_values(self):
         while True:
@@ -212,22 +189,13 @@ class InputUI(QMainWindow):
             time.sleep(2)
 
     def line_speed_fast(self):
-        if self.line_fast_button.isChecked():
-            self.line_frame_time = 0.5
-            self.line_timer.stop()
-            self.line_timer.start(self.line_frame_time * 1000)
+        lM.line_speed_fast(self)
 
     def line_speed_normal(self):
-        if self.line_normal_button.isChecked():
-            self.line_frame_time = 1
-            self.line_timer.stop()
-            self.line_timer.start(self.line_frame_time * 1000)
+        lM.line_speed_normal(self)
 
     def line_speed_slow(self):
-        if self.line_slow_button.isChecked():
-            self.line_frame_time = 2
-            self.line_timer.stop()
-            self.line_timer.start(self.line_frame_time * 1000)
+        lM.line_speed_slow(self)
 
     def generate_boxes(self):
         self.line_no_boxes = np.random.randint(1, 4)
