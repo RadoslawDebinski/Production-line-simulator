@@ -1,11 +1,13 @@
+import os
+import subprocess
 import sys
 import time
 
 import numpy as np
-from PySide2.QtCore import QTimer
+from PySide2.QtCore import QTimer, Qt
 from PySide2.QtGui import QPixmap, QBrush, QColor
 from PySide2.QtWidgets import QApplication, QMainWindow, \
-    QPushButton, QLabel, QGroupBox, QScrollBar, QFrame, QVBoxLayout, QRadioButton
+    QPushButton, QLabel, QGroupBox, QScrollBar, QFrame, QVBoxLayout, QRadioButton, QTextBrowser, QLineEdit
 from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsRectItem
 from PySide2.QtUiTools import QUiLoader
 import threading
@@ -18,13 +20,26 @@ import images.images
 
 
 class InputUI(QMainWindow):
-    def __init__(self):
+    def __init__(self, login_plain_text):
         super(InputUI, self).__init__()
 
         # Load the ui file
         loader = QUiLoader()
         self.ui = loader.load("mainUI.ui", self)
         self.ui.setWindowTitle("Information")
+
+        # Set up login and warning
+        self.login_box = self.ui.findChild(QTextBrowser, "textBrowser")
+        self.login_box.setText(login_plain_text)
+        self.warning_box = self.ui.findChild(QPushButton, "warningButton")
+        self.warning_box.clicked.connect(self.reset_warning)
+
+        # Set up warning algorithm for user
+        self.warning_delay = 30
+        self.warning_emergency = 10
+        self.warning_timer = QTimer()
+        self.warning_timer.timeout.connect(self.check_warning)
+        self.warning_timer.start(1000)  # Convert to milliseconds
 
         # Find the QGroupBoxes and add charts to them
         self.gpu_temp_group_box = self.ui.findChild(QGroupBox, "cpuTempGroupBox")
@@ -35,7 +50,7 @@ class InputUI(QMainWindow):
 
         # Scene for production line
         self.scene = QGraphicsScene(self.prod_line_box)
-        self.view = QGraphicsView(self.scene, self.prod_line_box)
+        self.view = QGraphicsView(self.scene)
 
         # Find the QScrollBars
         gpu_temp_scroll_bar = self.ui.findChild(QScrollBar, "cpuTempVerticalScrollBar")
@@ -128,6 +143,30 @@ class InputUI(QMainWindow):
         # self.ui.setStyleSheet(f"background-image: url({bg_image_path})")
         # Show the app
         self.ui.show()
+
+    def check_warning(self):
+        if self.warning_delay >= 0:
+            self.warning_box.setText(f"Time remaining: {self.warning_delay}s")
+            self.warning_box.setStyleSheet("background-color: white;")
+            self.warning_delay -= 1
+        else:
+            self.warning_box.setText(f"Emergency: {self.warning_emergency}s")
+            self.warning_box.setStyleSheet("background-color: red;")
+            self.warning_emergency -= 1
+
+        if self.warning_emergency <= 0:
+            self.reset_whole_app()
+
+    def reset_warning(self):
+        self.warning_delay = 30
+        self.warning_emergency = 10
+
+    def reset_whole_app(self):
+        self.ui.close()
+        python_executable = sys.executable
+        script_path = sys.argv[0]
+        subprocess.Popen([python_executable, script_path] + sys.argv[1:])
+        sys.exit()
 
     def handle_temp_scroll_bar_value_changed(self, value):
         sB.handle_temp_scroll_bar_value_changed(self, value)
@@ -227,7 +266,7 @@ class InputUI(QMainWindow):
             self.scene.removeItem(box)
             self.boxes_on_line.remove(box)
 
-        print(len(self.boxes_on_line))
+        # print(len(self.boxes_on_line))
 
         self.line_no_boxes = np.random.randint(1, 4)
         for i in range(self.line_no_boxes):
@@ -238,7 +277,7 @@ class InputUI(QMainWindow):
             box.setPos(0, 10 + i * 50)
             self.boxes_on_line.append(box)
 
-        print(len(self.boxes_on_line))
+        # print(len(self.boxes_on_line))
 
     def line_movement(self):
         if self.frame:
@@ -248,7 +287,7 @@ class InputUI(QMainWindow):
             self.pixmap_item.setPixmap(self.pixmap_line_inv)
             self.frame = True
 
-        border = 490
+        border = 470
         for box in self.boxes_on_line:
             box_position = box.pos()
             x, y = box_position.x(), box_position.y()
@@ -257,7 +296,7 @@ class InputUI(QMainWindow):
                 break
             box.setPos(x + 10/self.line_frame_time, y)
 
-        print(self.boxes_on_line[0].pos().x())
+        # print(self.boxes_on_line[0].pos().x())
 
         self.prod_line_box.update()
 
@@ -272,8 +311,29 @@ class InputUI(QMainWindow):
             "background-color: red;" if ram_usage > self.ram_usage_thresh else "background-color: white;")
 
 
+class LoginUI(QMainWindow):
+    def __init__(self):
+        super(LoginUI, self).__init__()
+        # Load the ui file
+        loader = QUiLoader()
+        self.ui = loader.load("loginUI.ui", self)
+        self.ui.setWindowTitle("Login")
+
+        # Set up login and warning
+        self.login_box = self.ui.findChild(QLineEdit, "lineEdit")
+        self.start_box = self.ui.findChild(QPushButton, "pushButton")
+
+        self.start_box.clicked.connect(self.start_line)
+        self.ui.show()
+
+    def start_line(self):
+        # Hide current LoginUI
+        self.ui.close()
+        InputUI(self.login_box.text())
+
+
 # Initialize the App
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    UIWindow = InputUI()
+    UIWindow = LoginUI()
     app.exec_()
